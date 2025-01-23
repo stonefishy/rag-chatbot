@@ -18,7 +18,7 @@ AZURE_OPENAI_API_VERSION=<your_api_version>
 OPENAI_API_KEY=<your_api_key?
 AZURE_OPENAI_CHAT_DEPLOYMENT=gpt-4o # we are using gpt-4o model, you can use any other model which you deployed in your endpoint.
 AZURE_OPENAI_EMBEDDING_DEPLOYMENT=text-embedding-ada-002 # we are using text-embedding-ada-002 model.
-
+```
 
 Then, you need to install the required libraries using the following command:
 ```
