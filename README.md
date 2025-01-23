@@ -40,4 +40,6 @@ To process PDF files to FAISS vector store, please run below command:
 python process_pdfs.py
 ```
 
-The, you will see the vector store file under `vector_store` folder.
+Then, you will see the vector store file under `vector_store` folder.
+
+You can also replace AzureOpenAI to use OpenAI, just changing AzureOpenAI related code to OpenAI. Most of code are same.
