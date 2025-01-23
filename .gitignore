@@ -1,12 +1,8 @@
 .env
 .idea
-.streamlit
 .venv
 __pycache__
 
 documents/employee-20241231.pdf
-documents/JBL_Bar_300_V8_EN.pdf
 vector_stores/employee.faiss
 vector_stores/employee.pkl
-vector_stores/jbl_bar_300.faiss
-vector_stores/jbl_bar_300.pkl

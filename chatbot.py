@@ -1,26 +1,51 @@
 import time
+import os
 import streamlit as st
-import azure_openai_util
 import config
 from langchain_community.vectorstores import FAISS
 from langchain.chains.question_answering import load_qa_chain
+from langchain_community.chat_models import AzureChatOpenAI
+from langchain_openai import AzureOpenAIEmbeddings
+
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
 
+azure_endpoint = os.getenv("AZURE_OPENAI_ENDPOINT")
+api_version = os.getenv("AZURE_OPENAI_API_VERSION")
+api_key = os.getenv("OPENAI_API_KEY")
+embedding_deployment = os.getenv("AZURE_OPENAI_EMBEDDING_DEPLOYMENT")
+chat_deployment = os.getenv("AZURE_OPENAI_CHAT_DEPLOYMENT")
+
+def embeddings():
+    # generating embedding
+    return AzureOpenAIEmbeddings(
+        azure_deployment=embedding_deployment,
+        api_version=api_version,
+        api_key=api_key,
+        azure_endpoint=azure_endpoint)
+
+
 def load_vector_store(vector_store_folder_path, vectore_store_name):
     vector_store = FAISS.load_local(
         folder_path=vector_store_folder_path, 
-        embeddings=azure_openai_util.embeddings(), 
+        embeddings=embeddings(), 
         index_name=vectore_store_name,
         allow_dangerous_deserialization=True)
     return vector_store 
 
 
 def generateChain():
-    llm = azure_openai_util.load_llm()
+    llm =  AzureChatOpenAI(
+        azure_endpoint=azure_endpoint,
+        api_key=api_key,
+        api_version=api_version,
+        azure_deployment=chat_deployment,
+        temperature=0,
+        max_tokens=1000,
+    )
     # chain -> take the question, get relevant document, pass it to the LLM, generate the output
     chain = load_qa_chain(llm, chain_type="stuff")
     return chain
@@ -32,13 +57,10 @@ def generate_stream(response):
         yield word + " "
         time.sleep(0.05)
 
-not_found_response = """
-I cannot help, please ask questions about JBL devices (JBL Pulse 5, JBL Clip 5, JBL Charge 5 Wi-Fi, JBL Bar 500, JBL Bar 5.0 MultiBeam)
-"""
 
 def main():
     st.set_page_config(
-        page_title="JBL Products Chatbot App",
+        page_title="JBL Products Chatbot",
         page_icon="🧊",
         layout="centered",
         initial_sidebar_state="expanded",
@@ -49,7 +71,7 @@ def main():
     chain = generateChain()
 
     with st.chat_message("assistant"):
-        st.markdown("Ask me anything about JBL devices (JBL Pulse 5, JBL Clip 5, JBL Charge 5 Wi-Fi,JBL Bar 500, JBL Bar 5.0 MultiBeam)")
+        st.markdown("Ask me anything about JBL devices (JBL Pulse 5, JBL Clip 5, JBL Bar 500)")
 
     if "messages" not in st.session_state:
         st.session_state.messages = []
